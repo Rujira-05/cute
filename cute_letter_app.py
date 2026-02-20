@@ -109,16 +109,7 @@ else:
         """, unsafe_allow_html=True)
         
         # ปุ่มรีเซ็ต
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔄 เปิดอีกครั้ง", use_container_width=True):
-                st.session_state.opened = False
-                st.rerun()
-        with col2:
-            if st.button("✏️ เปลี่ยนชื่อ", use_container_width=True):
-                st.session_state.name = ""
-                st.session_state.opened = False
-                st.rerun()
+
 
 st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #ff4d94;'>Made with 💖 by Lisa</p>", unsafe_allow_html=True)
+
