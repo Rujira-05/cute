@@ -48,6 +48,10 @@ st.markdown("""
         0% { opacity: 0; transform: translateY(20px); }
         100% { opacity: 1; transform: translateY(0); }
     }
+    /* ปรับขนาด input */
+    .stTextInput input {
+        font-size: 16px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -60,12 +64,18 @@ if "opened" not in st.session_state:
 # ส่วนรับชื่อเล่น - แสดงเฉพาะถ้ายังไม่มีชื่อ
 if not st.session_state.name:
     st.markdown('<div class="cute-title">💌 จดหมายมาส่ง 💌</div>', unsafe_allow_html=True)
-    name_input = st.text_input("ใส่ชื่อเล่นของคุณตรงนี้เลยยย 💕:", placeholder="พิมพ์ชื่อตรงนี้...")
     
-    if name_input:
-        st.session_state.name = name_input
-        st.session_state.opened = False
-        st.rerun()
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        name_input = st.text_input("ใส่ชื่อเล่นของคุณ 💕:", placeholder="พิมพ์ชื่อตรงนี้...")
+        
+        if st.button("✨ ยืนยัน ✨", use_container_width=True, key="submit_name"):
+            if name_input.strip():
+                st.session_state.name = name_input
+                st.session_state.opened = False
+                st.rerun()
+            else:
+                st.warning("⚠️ กรุณาใส่ชื่อของคุณนะ!")
 else:
     name = st.session_state.name
     
@@ -78,7 +88,7 @@ else:
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             st.markdown('<div class="envelope">📮</div>', unsafe_allow_html=True)
-            if st.button("กดตรงนี้เพื่อเปิดซองจดหมาย 🌸", use_container_width=True, key="open_btn"):
+            if st.button("กดเพื่อเปิดซองจดหมาย 🌸", use_container_width=True, key="open_btn"):
                 st.session_state.opened = True
                 st.rerun()
     else:
@@ -92,13 +102,23 @@ else:
         st.markdown(f"""
         <div class="letter-box">
             <p>สวัสดี <b>{name}</b>! 🌷</p>
-            <p>มองไรงะ<br>มีปัญหาเบ๋อ<br>ยังอีก😊</p>
+            <p>ขอให้วันนี้เป็นวันที่ดี<br>สดใสเหมือนดอกไม้พวกนี้นะ<br>ยิ้มเยอะๆ ล่ะ 😊</p>
             <br>
             <p style="color: #ff4d94;"><b>รัก,<br>ลิซ่า 💖</b></p>
         </div>
         """, unsafe_allow_html=True)
         
-       
+        # ปุ่มรีเซ็ต
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔄 เปิดอีกครั้ง", use_container_width=True):
+                st.session_state.opened = False
+                st.rerun()
+        with col2:
+            if st.button("✏️ เปลี่ยนชื่อ", use_container_width=True):
+                st.session_state.name = ""
+                st.session_state.opened = False
+                st.rerun()
 
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #ff4d94;'>Made with 💖 by Lisa</p>", unsafe_allow_html=True)
