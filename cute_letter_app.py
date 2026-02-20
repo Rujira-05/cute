@@ -67,7 +67,6 @@ if not st.session_state.name:
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        name_input = st.text_input("ใส่ชื่อเล่นของคุณ 💕:", placeholder="พิมพ์ชื่อตรงนี้...")
         
         if st.button("✨ ยืนยัน ✨", use_container_width=True, key="submit_name"):
             if name_input.strip():
@@ -80,7 +79,7 @@ else:
     name = st.session_state.name
     
     # แสดงหัวข้อ
-    st.markdown(f'<div class="cute-title">💌 มีจดหมายจาก ลิซ่า ถึง {name} 💌</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="cute-title">💌 มีจดหมายจาก คนหล่อเท่ ถึง {name} 💌</div>', unsafe_allow_html=True)
     
     # แสดงซองจดหมายหรือข้อความจดหมาย
     if not st.session_state.opened:
@@ -120,5 +119,4 @@ else:
                 st.session_state.opened = False
                 st.rerun()
 
-st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #ff4d94;'>Made with 💖 by Lisa</p>", unsafe_allow_html=True)
+
