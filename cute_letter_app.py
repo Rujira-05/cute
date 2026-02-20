@@ -80,7 +80,7 @@ else:
     name = st.session_state.name
     
     # แสดงหัวข้อ
-    st.markdown(f'<div class="cute-title">💌 มีจดหมายจาก ลิซ่า ถึง {name} 💌</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="cute-title">💌 มีจดหมายจาก คนหล่อเท่ ถึง {name} 💌</div>', unsafe_allow_html=True)
     
     # แสดงซองจดหมายหรือข้อความจดหมาย
     if not st.session_state.opened:
