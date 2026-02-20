@@ -92,23 +92,13 @@ else:
         st.markdown(f"""
         <div class="letter-box">
             <p>สวัสดี <b>{name}</b>! 🌷</p>
-            <p>ขอให้วันนี้เป็นวันที่ดี<br>สดใสเหมือนดอกไม้พวกนี้นะ<br>ยิ้มเยอะๆ ล่ะ 😊</p>
+            <p>มองไรงะ<br>มีปัญหาเบ๋อ<br>ยังอีก😊</p>
             <br>
             <p style="color: #ff4d94;"><b>รัก,<br>ลิซ่า 💖</b></p>
         </div>
         """, unsafe_allow_html=True)
         
-        # ปุ่มรีเซ็ต
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔄 เปิดอีกครั้ง", use_container_width=True):
-                st.session_state.opened = False
-                st.rerun()
-        with col2:
-            if st.button("✏️ เปลี่ยนชื่อ", use_container_width=True):
-                st.session_state.name = ""
-                st.session_state.opened = False
-                st.rerun()
+       
 
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #ff4d94;'>Made with 💖 by Lisa</p>", unsafe_allow_html=True)
