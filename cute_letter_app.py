@@ -2,7 +2,7 @@ import streamlit as st
 import time
 
 # ตั้งค่าหน้าเว็บ
-st.set_page_config(page_title="Letter from Lisa 💌", page_icon="💌")
+st.set_page_config(page_title="มีจดหมายมาส่ง 💌", page_icon="💌")
 
 # ตกแต่งด้วย CSS ให้ดูน่ารักมุ้งมิ้ง
 st.markdown("""
@@ -32,6 +32,17 @@ st.markdown("""
         font-weight: bold;
         margin-bottom: 20px;
     }
+    /* ซองจดหมาย */
+    .envelope {
+        text-align: center;
+        font-size: 120px;
+        margin: 40px 0;
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+    .envelope:hover {
+        transform: scale(1.1);
+    }
     /* แอนิเมชันตอนจดหมายปรากฏ */
     @keyframes fadeIn {
         0% { opacity: 0; transform: translateY(20px); }
@@ -40,27 +51,44 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ส่วนรับชื่อเล่น
-name = st.text_input("ใส่ชื่อเล่นของคุณตรงนี้เลยยย 💕:", placeholder="พิมพ์ชื่อตรงนี้...")
+# เก็บสถานะของจดหมาย
+if "name" not in st.session_state:
+    st.session_state.name = ""
+if "opened" not in st.session_state:
+    st.session_state.opened = False
 
-if name:
+# ส่วนรับชื่อเล่น - แสดงเฉพาะถ้ายังไม่มีชื่อ
+if not st.session_state.name:
+    st.markdown('<div class="cute-title">💌 จดหมายมาส่ง 💌</div>', unsafe_allow_html=True)
+    name_input = st.text_input("ใส่ชื่อเล่นของคุณตรงนี้เลยยย 💕:", placeholder="พิมพ์ชื่อตรงนี้...")
+    
+    if name_input:
+        st.session_state.name = name_input
+        st.session_state.opened = False
+        st.rerun()
+else:
+    name = st.session_state.name
+    
     # แสดงหัวข้อ
     st.markdown(f'<div class="cute-title">💌 มีจดหมายจาก ลิซ่า ถึง {name} 💌</div>', unsafe_allow_html=True)
     
-    # ปุ่มเปิดซองจดหมาย (จัดให้อยู่ตรงกลาง)
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        open_button = st.button("กดตรงนี้เพื่อเปิดซองจดหมาย 🌸", use_container_width=True)
-
-    if open_button:
-        # ใช้แอนิเมชันลูกโป่งพุ่งของ Streamlit แทนดอกไม้
-        st.balloons() 
+    # แสดงซองจดหมายหรือข้อความจดหมาย
+    if not st.session_state.opened:
+        # แสดงซองจดหมาย
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.markdown('<div class="envelope">📮</div>', unsafe_allow_html=True)
+            if st.button("กดตรงนี้เพื่อเปิดซองจดหมาย 🌸", use_container_width=True, key="open_btn"):
+                st.session_state.opened = True
+                st.rerun()
+    else:
+        # แสดงเนื้อหาจดหมาย
+        st.balloons()
         
         # หน่วงเวลาให้ดูตื่นเต้นนิดนึง
         with st.spinner('กำลังเปิดจดหมาย...'):
             time.sleep(1.5)
-            
-        # แสดงเนื้อหาจดหมาย
+        
         st.markdown(f"""
         <div class="letter-box">
             <p>สวัสดี <b>{name}</b>! 🌷</p>
@@ -69,3 +97,18 @@ if name:
             <p style="color: #ff4d94;"><b>รัก,<br>ลิซ่า 💖</b></p>
         </div>
         """, unsafe_allow_html=True)
+        
+        # ปุ่มรีเซ็ต
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔄 เปิดอีกครั้ง", use_container_width=True):
+                st.session_state.opened = False
+                st.rerun()
+        with col2:
+            if st.button("✏️ เปลี่ยนชื่อ", use_container_width=True):
+                st.session_state.name = ""
+                st.session_state.opened = False
+                st.rerun()
+
+st.markdown("<hr>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #ff4d94;'>Made with 💖 by Lisa</p>", unsafe_allow_html=True)
