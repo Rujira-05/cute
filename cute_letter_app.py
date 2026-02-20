@@ -1,139 +1,119 @@
-import tkinter as tk
-from tkinter import simpledialog
+import streamlit as st
 import random
 import math
+from datetime import datetime
 
-class CuteLetterApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.withdraw() # ซ่อนหน้าต่างหลักไว้ก่อนเพื่อถามชื่อ
-        
-        # 1. ถามชื่อเล่น
-        self.name = simpledialog.askstring("Hello!", "ใส่ชื่อเล่นของคุณตรงนี้เลยยย 💕:")
-        if not self.name:
-            self.name = "คนน่ารัก"
-            
-        self.root.deiconify() # แสดงหน้าต่างหลัก
-        self.root.title("Letter from Lisa 💌")
-        self.root.geometry("600x600")
-        self.root.configure(bg='#ffe6f2') # พื้นหลังสีชมพูพาสเทล
-        
-        # สร้าง Canvas สำหรับวาดรูป
-        self.canvas = tk.Canvas(root, width=600, height=600, bg='#ffe6f2', highlightthickness=0)
-        self.canvas.pack()
-        
-        # ตัวแปรสถานะ
-        self.is_opened = False
-        self.wiggle_offset = 0
-        self.wiggle_direction = 1
-        self.flowers = []
-        
-        # ข้อความหัวข้อ
-        self.title_text = self.canvas.create_text(
-            300, 100, 
-            text=f"💌 มีจดหมายจาก ลิซ่า ถึง {self.name} 💌", 
-            font=("Helvetica", 24, "bold"), fill="#ff4d94"
-        )
-        
-        # กลุ่มของภาพซองจดหมาย
-        self.envelope_items = []
-        self.draw_envelope()
-        
-        # เริ่มแอนิเมชันซองดุ๊กดิ๊ก
-        self.wiggle_envelope()
-        
-        # ตั้งค่าให้คลิกที่ Canvas แล้วจดหมายเปิด
-        self.canvas.bind("<Button-1>", self.open_letter)
+st.set_page_config(page_title="Letter from Lisa 💌", layout="centered")
 
-    def draw_envelope(self):
-        # วาดตัวซองจดหมาย
-        body = self.canvas.create_rectangle(200, 250, 400, 380, fill="#ffb3d9", outline="#ff66b3", width=3)
-        # วาดฝาปิดซองจดหมาย (แบบปิด)
-        self.flap_closed = self.canvas.create_polygon(200, 250, 300, 320, 400, 250, fill="#ff99cc", outline="#ff66b3", width=3)
+# CSS styling
+st.markdown("""
+    <style>
+    body {
+        background: linear-gradient(135deg, #ffe6f2 0%, #ffcceb 100%);
+    }
+    .main {
+        background: linear-gradient(135deg, #ffe6f2 0%, #ffcceb 100%);
+    }
+    .stContainer {
+        background: #ffe6f2;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# Title
+st.markdown("<h1 style='text-align: center; color: #ff4d94;'>💌 Letter from Lisa 💌</h1>", unsafe_allow_html=True)
+
+# Ask for name
+if "name" not in st.session_state:
+    with st.form("name_form"):
+        name_input = st.text_input("ใส่ชื่อเล่นของคุณตรงนี้เลยยย 💕:", value="", placeholder="ชื่อของคุณ")
+        submitted = st.form_submit_button("✨ ตกลง ✨")
         
-        self.envelope_items.extend([body, self.flap_closed])
-
-    def wiggle_envelope(self):
-        if self.is_opened:
-            return # หยุดดุ๊กดิ๊กถ้าเปิดแล้ว
-        
-        # ขยับซ้ายขวา
-        move_x = self.wiggle_direction * 2
-        for item in self.envelope_items:
-            self.canvas.move(item, move_x, 0)
-            
-        self.wiggle_offset += move_x
-        if abs(self.wiggle_offset) > 10:
-            self.wiggle_direction *= -1 # สลับทิศทาง
-            
-        self.root.after(100, self.wiggle_envelope)
-
-    def open_letter(self, event):
-        # เช็คว่าคลิกโดนซองจดหมายหรือเปล่า และยังไม่ได้เปิดใช่ไหม
-        if not self.is_opened:
-            x, y = event.x, event.y
-            if 150 <= x <= 450 and 200 <= y <= 400: # พื้นที่ซองโดยประมาณ
-                self.is_opened = True
-                
-                # ลบฝาปิด
-                self.canvas.delete(self.flap_closed)
-                
-                # วาดกระดาษจดหมายโผล่ขึ้นมา
-                self.paper = self.canvas.create_rectangle(210, 180, 390, 380, fill="white", outline="#cccccc", width=2)
-                self.message = self.canvas.create_text(
-                    300, 280, 
-                    text=f"สวัสดี {self.name}!\n\nขอให้วันนี้เป็นวันที่ดี\nสดใสเหมือนดอกไม้พวกนี้นะ\nยิ้มเยอะๆ ล่ะ 😊\n\nรัก,\nลิซ่า", 
-                    font=("Helvetica", 14), fill="#333333", justify="center"
-                )
-                
-                # วาดฝาเปิดซองจดหมาย (ชี้ขึ้น)
-                self.flap_opened = self.canvas.create_polygon(200, 250, 300, 180, 400, 250, fill="#ffb3d9", outline="#ff66b3", width=3)
-                
-                # เอาฝาซองมาบังกระดาษด้านล่าง (จัดลำดับ Layer)
-                self.canvas.tag_raise(self.flap_opened)
-                
-                # เริ่มแอนิเมชันดอกไม้พุ่ง
-                self.burst_flowers()
-
-    def burst_flowers(self):
-        emojis = ['🌸', '🌺', '🌼', '🌷', '✨', '💖']
-        for _ in range(40): # จำนวนดอกไม้
-            char = random.choice(emojis)
-            x, y = 300, 250 # จุดศูนย์กลางที่พุ่งออกมา (ปากซอง)
-            
-            # สุ่มมุมและความเร็ว
-            angle = random.uniform(0, 2 * math.pi)
-            speed = random.uniform(5, 15)
-            vx = math.cos(angle) * speed
-            vy = math.sin(angle) * speed - 5 # ลบ 5 เพื่อให้พุ่งขึ้นข้างบนมากกว่า
-            
-            # สร้างตัวอักษรดอกไม้
-            item = self.canvas.create_text(x, y, text=char, font=("Arial", random.randint(16, 28)))
-            self.flowers.append({'item': item, 'vx': vx, 'vy': vy, 'life': 100})
-            
-        self.animate_flowers()
-
-    def animate_flowers(self):
-        active_flowers = []
-        for f in self.flowers:
-            # ขยับดอกไม้
-            self.canvas.move(f['item'], f['vx'], f['vy'])
-            # เพิ่มแรงโน้มถ่วงให้ตกลงมา
-            f['vy'] += 0.8
-            f['life'] -= 1
-            
-            # ถ้ายังไม่หมดอายุขัย ให้เก็บไว้ทำแอนิเมชันต่อ
-            if f['life'] > 0 and self.canvas.coords(f['item'])[1] < 700:
-                active_flowers.append(f)
+        if submitted:
+            if name_input.strip():
+                st.session_state.name = name_input
+                st.session_state.opened = False
+                st.rerun()
             else:
-                self.canvas.delete(f['item'])
-                
-        self.flowers = active_flowers
+                st.session_state.name = "คนน่ารัก"
+                st.session_state.opened = False
+                st.rerun()
+else:
+    name = st.session_state.name
+    
+    # Envelope animation
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown(f"<h2 style='text-align: center;'>📮 มีจดหมายให้ {name} 📮</h2>", unsafe_allow_html=True)
         
-        if self.flowers:
-            self.root.after(30, self.animate_flowers)
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = CuteLetterApp(root)
-    root.mainloop()
+        # Button to open letter
+        if not st.session_state.get("opened", False):
+            if st.button("🎀 คลิกเพื่อเปิดจดหมาย 🎀", key="open_btn", use_container_width=True):
+                st.session_state.opened = True
+                st.rerun()
+        
+        # Show letter
+        if st.session_state.get("opened", False):
+            # Envelope flap animation
+            st.markdown("""
+                <div style='text-align: center; font-size: 48px; margin: 20px 0;'>
+                    📬 ✨ 📬
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Letter content with flowers
+            st.markdown(f"""
+                <div style='background: white; border-radius: 15px; padding: 30px; 
+                            box-shadow: 0 4px 15px rgba(255, 77, 148, 0.3); 
+                            border: 2px solid #ffb3d9; text-align: center;'>
+                    
+                    <div style='font-size: 24px; margin-bottom: 20px;'>🌸 🌺 🌼 🌷 ✨ 💖 🌸</div>
+                    
+                    <h3 style='color: #ff4d94;'>สวัสดี {name}! 👋</h3>
+                    
+                    <p style='color: #333; font-size: 16px; line-height: 1.8;'>
+                        ขอให้วันนี้เป็นวันที่ดี<br>
+                        สดใสเหมือนดอกไม้พวกนี้นะ<br>
+                        ยิ้มเยอะๆ ล่ะ 😊
+                    </p>
+                    
+                    <div style='font-size: 24px; margin: 20px 0;'>🌸 🌺 🌼 🌷 ✨ 💖 🌸</div>
+                    
+                    <p style='color: #ff4d94; font-size: 18px; font-style: italic;'>
+                        รัก,<br>
+                        ลิซ่า 💕
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Flower animations with emojis
+            st.markdown("""
+                <div style='text-align: center; margin-top: 30px; font-size: 32px;'>
+                    <div style='animation: bounce 1s infinite;'>🌸</div>
+                    <div style='animation: bounce 1s infinite 0.2s;'>🌺</div>
+                    <div style='animation: bounce 1s infinite 0.4s;'>🌼</div>
+                    <div style='animation: bounce 1s infinite 0.6s;'>🌷</div>
+                    <div style='animation: bounce 1s infinite 0.8s;'>✨</div>
+                    <div style='animation: bounce 1s infinite 1s;'>💖</div>
+                    
+                    <style>
+                        @keyframes bounce {
+                            0%, 100% { transform: translateY(0); }
+                            50% { transform: translateY(-20px); }
+                        }
+                    </style>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Reset button
+            if st.button("🔄 เปิดอีกครั้ง", key="reset_btn", use_container_width=True):
+                st.session_state.opened = False
+                st.rerun()
+            
+            if st.button("✏️ เปลี่ยนชื่อ", key="change_name_btn", use_container_width=True):
+                del st.session_state.name
+                st.rerun()
+    
+    # Footer
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #ff4d94;'>Made with 💖 by Lisa</p>", unsafe_allow_html=True)
