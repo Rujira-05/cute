@@ -67,7 +67,7 @@ if not st.session_state.name:
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-         name_input = st.text_input(placeholder="พิมพ์ชื่อตรงนี้...")
+           name_input = st.text_input("ใส่ชื่อเล่นของคุณ 💕:", placeholder="พิมพ์ชื่อตรงนี้...")
         
         if st.button("✨ ยืนยัน ✨", use_container_width=True, key="submit_name"):
             if name_input.strip():
@@ -107,17 +107,5 @@ else:
             <p style="color: #ff4d94;"><b>รัก,<br>ลิซ่า 💖</b></p>
         </div>
         """, unsafe_allow_html=True)
-        
-        # ปุ่มรีเซ็ต
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔄 เปิดอีกครั้ง", use_container_width=True):
-                st.session_state.opened = False
-                st.rerun()
-        with col2:
-            if st.button("✏️ เปลี่ยนชื่อ", use_container_width=True):
-                st.session_state.name = ""
-                st.session_state.opened = False
-                st.rerun()
 
 st.markdown("<hr>", unsafe_allow_html=True)
