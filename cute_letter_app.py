@@ -67,6 +67,7 @@ if not st.session_state.name:
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
+        name_input = st.text_input("ใส่ชื่อเล่นของคุณ 💕:", placeholder="พิมพ์ชื่อตรงนี้...")
         
         if st.button("✨ ยืนยัน ✨", use_container_width=True, key="submit_name"):
             if name_input.strip():
@@ -119,4 +120,4 @@ else:
                 st.session_state.opened = False
                 st.rerun()
 
-
+st.markdown("<hr>", unsafe_allow_html=True)
